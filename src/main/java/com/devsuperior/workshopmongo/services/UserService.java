@@ -54,14 +54,14 @@ public class UserService {
 				}).map(user -> new UserDTO(user))
 				.switchIfEmpty(Mono.error(new ResourceNotFoundException("id not found")));
 	}
-//
-//	@Transactional
-//	public void delete(String id) {
-//		User entity = repository.findById(id)
-//				.orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
-//		repository.delete(entity);
-//	}
-//
+
+	@Transactional
+	public Mono<Void> delete(String id) {
+		return repository.findById(id)
+				.switchIfEmpty(Mono.error(new ResourceNotFoundException("id not found")))
+				.flatMap(x -> repository.delete(x));
+	}
+
 	private void copyDtoToEntity(UserDTO dto, User entity) {
 		entity.setName(dto.getName());
 		entity.setEmail(dto.getEmail());
