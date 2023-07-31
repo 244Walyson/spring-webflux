@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devsuperior.workshopmongo.dto.PostDTO;
 import com.devsuperior.workshopmongo.dto.UserDTO;
 import com.devsuperior.workshopmongo.services.UserService;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -25,17 +27,17 @@ public class UserController {
 	@Autowired
 	private UserService service;
 
-//	@GetMapping
-//	public ResponseEntity<List<UserDTO>> findAll() {
-//		List<UserDTO> list = service.findAll();
-//		return ResponseEntity.ok().body(list);
-//	}
-//
-//	@GetMapping(value = "/{id}")
-//	public ResponseEntity<UserDTO> findById(@PathVariable String id) {
-//		UserDTO dto = service.findById(id);
-//		return ResponseEntity.ok(dto);
-//	}
+	@GetMapping
+	public ResponseEntity<Flux<UserDTO>> findAll() {
+		Flux<UserDTO> list = service.findAll();
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping(value = "/{id}")
+	public Mono<ResponseEntity<UserDTO>> findById(@PathVariable String id) {
+		return service.findById(id).map(x -> ResponseEntity.ok().body(x));
+
+	}
 //
 //	@GetMapping(value = "/{id}/posts")
 //	public ResponseEntity<List<PostDTO>> findPosts(@PathVariable String id) {
